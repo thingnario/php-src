@@ -1789,8 +1789,8 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_number_format, 0, 0, 1)
 	ZEND_ARG_INFO(0, number)
 	ZEND_ARG_INFO(0, num_decimal_places)
-	ZEND_ARG_INFO(0, dec_separator)
-	ZEND_ARG_INFO(0, thousands_separator)
+	ZEND_ARG_INFO(0, dec_seperator)
+	ZEND_ARG_INFO(0, thousands_seperator)
 ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(arginfo_fmod, 0)
@@ -1861,11 +1861,13 @@ ZEND_BEGIN_ARG_INFO(arginfo_getlastmod, 0)
 ZEND_END_ARG_INFO()
 /* }}} */
 /* {{{ password.c */
+#if HAVE_CRYPT
 ZEND_BEGIN_ARG_INFO_EX(arginfo_password_hash, 0, 0, 2)
 	ZEND_ARG_INFO(0, password)
 	ZEND_ARG_INFO(0, algo)
 	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
+#endif
 ZEND_BEGIN_ARG_INFO_EX(arginfo_password_get_info, 0, 0, 1)
 	ZEND_ARG_INFO(0, hash)
 ZEND_END_ARG_INFO()
@@ -2889,10 +2891,12 @@ const zend_function_entry basic_functions[] = { /* {{{ */
 	PHP_FE(base64_decode,													arginfo_base64_decode)
 	PHP_FE(base64_encode,													arginfo_base64_encode)
 
+#if HAVE_CRYPT
 	PHP_FE(password_hash,													arginfo_password_hash)
 	PHP_FE(password_get_info,												arginfo_password_get_info)
 	PHP_FE(password_needs_rehash,											arginfo_password_needs_rehash)
 	PHP_FE(password_verify,													arginfo_password_verify)
+#endif
 	PHP_FE(convert_uuencode,												arginfo_convert_uuencode)
 	PHP_FE(convert_uudecode,												arginfo_convert_uudecode)
 
@@ -3644,7 +3648,10 @@ PHP_MINIT_FUNCTION(basic) /* {{{ */
 	BASIC_MINIT_SUBMODULE(browscap)
 	BASIC_MINIT_SUBMODULE(standard_filters)
 	BASIC_MINIT_SUBMODULE(user_filters)
+
+#if HAVE_CRYPT
 	BASIC_MINIT_SUBMODULE(password)
+#endif
 
 #if defined(HAVE_LOCALECONV) && defined(ZTS)
 	BASIC_MINIT_SUBMODULE(localeconv)

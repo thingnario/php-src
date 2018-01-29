@@ -237,6 +237,7 @@ sapi/apache/libphp5.module
 sapi/apache2handler/libphp5.module
 sapi/apache_hooks/libphp5.module
 sapi/cgi/php-cgi
+sapi/cgi/php-cgi.*
 sapi/cli/php.1
 sapi/fpm/php-fpm
 sapi/fpm/php-fpm.1

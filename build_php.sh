@@ -26,7 +26,7 @@ export RANLIB=${ARCH}-ranlib
 export CC=${ARCH}-gcc
 export NM=${ARCH}-nm
 
-./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
 make clean
-make 
+./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+make CPPFLAGS="-D__USE_BSD"
 sudo "PATH=$PATH" make install

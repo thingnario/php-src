@@ -19,7 +19,11 @@ ARCH=`echo $item | sed -e 's/-gcc.*//g'`
 
 # ======== setup autoconf 2.13 ========
 sudo apt-get install autoconf2.13
-sudo ln -s /etc/autoconf2.13/acconfig.h /usr/share/autoconf2.13/acconfig.h
+if [ ! -f /usr/share/autoconf2.13/acconfig.h ]; then
+	sudo ln -s /etc/autoconf2.13/acconfig.h /usr/share/autoconf2.13/acconfig.h
+fi
+export PHP_AUTOCONF=/usr/bin/autoconf2.13
+export PHP_AUTOHEADER=/usr/bin/autoheader2.13
 
 
 ## ======== patch for libxml > 2.9.0 ========

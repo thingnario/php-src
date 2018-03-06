@@ -7,15 +7,37 @@ if [ $# -ne 1 ]; then
 fi
 
 export PATH="$1/bin:$PATH"
-
 tool_chain_path=${1%/}
-#ARCH=`echo $1 | awk -F"/" '{print (NF>1)? $NF : $1}'`
 
-# linux architecture 
+
+# ======== find architecture ========
 item=`ls $tool_chain_path/bin | grep gcc`
 IFS=' ' read -ra ADDR <<< "$item"
 item="${ADDR[0]}"
 ARCH=`echo $item | sed -e 's/-gcc.*//g'`
+
+
+# ======== setup autoconf 2.13 ========
+sudo apt-get install autoconf2.13
+sudo ln -s /etc/autoconf2.13/acconfig.h /usr/share/autoconf2.13/acconfig.h
+
+
+## ======== patch for libxml > 2.9.0 ========
+#/usr/bin/curl -s https://mail.gnome.org/archives/xml/2012-August/txtbgxGXAvz4N.txt | patch -p0
+
+
+# ======== download bison 2.4.1 ========
+wget https://ftp.gnu.org/gnu/bison/bison-2.4.1.tar.gz
+tar -xvf bison-2.4.1.tar.gz
+cd bison-2.4.1/
+chmod +x configure
+mkdir build
+./configure
+make -j 4
+sudo make install
+cd ..
+rm bison-2.4.1.tar.gz
+
 
 # ======== php with static build ========
 export ARCH=$ARCH
@@ -27,6 +49,9 @@ export CC=${ARCH}-gcc
 export NM=${ARCH}-nm
 
 make clean
+if [ ! -f configure ]; then
+	./buildconf --force
+fi
 ./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
-make CPPFLAGS="-D__USE_BSD"
+make
 sudo "PATH=$PATH" make install

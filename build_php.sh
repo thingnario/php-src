@@ -24,6 +24,7 @@ if [ ! -f /usr/share/autoconf2.13/acconfig.h ]; then
 fi
 export PHP_AUTOCONF=/usr/bin/autoconf2.13
 export PHP_AUTOHEADER=/usr/bin/autoheader2.13
+./buildconf --force
 
 
 ## ======== patch for libxml > 2.9.0 ========
@@ -53,9 +54,6 @@ export CC=${ARCH}-gcc
 export NM=${ARCH}-nm
 
 make clean
-if [ ! -f configure ]; then
-	./buildconf --force
-fi
 ./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
 make
 sudo "PATH=$PATH" make install

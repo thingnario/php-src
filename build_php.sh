@@ -45,15 +45,26 @@ rm bison-2.4.1.tar.gz
 
 
 # ======== php with static build ========
-export ARCH=$ARCH
-export AR=${ARCH}-ar
-export AS=${ARCH}-as
-export LD=${ARCH}-ld
-export RANLIB=${ARCH}-ranlib
-export CC=${ARCH}-gcc
-export NM=${ARCH}-nm
-
 make clean
-./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+
+export ARCH=$ARCH
+if [ "$ARCH" == "" ]; then
+	export AR=ar
+	export AS=as
+	export LD=ld
+	export RANLIB=ranlib
+	export CC=gcc
+	export NM=nm
+	./configure --prefix=$tool_chain_path --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+else
+	export AR=${ARCH}-ar
+	export AS=${ARCH}-as
+	export LD=${ARCH}-ld
+	export RANLIB=${ARCH}-ranlib
+	export CC=${ARCH}-gcc
+	export NM=${ARCH}-nm
+	./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+fi
+
 make
 sudo "PATH=$PATH" make install

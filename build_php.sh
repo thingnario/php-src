@@ -45,7 +45,7 @@ rm bison-2.4.1.tar.gz
 
 
 # ======== php with static build ========
-make clean
+make distclean
 
 export ARCH=$ARCH
 if [ "$ARCH" == "" ]; then

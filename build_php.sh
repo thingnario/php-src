@@ -6,11 +6,8 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-export PATH="$1/bin:$PATH"
-tool_chain_path=${1%/}
-
-
 # ======== find architecture ========
+tool_chain_path=${1%/}
 item=`ls $tool_chain_path/bin | grep gcc`
 IFS=' ' read -ra ADDR <<< "$item"
 item="${ADDR[0]}"
@@ -24,7 +21,6 @@ if [ ! -f /usr/share/autoconf2.13/acconfig.h ]; then
 fi
 export PHP_AUTOCONF=/usr/bin/autoconf2.13
 export PHP_AUTOHEADER=/usr/bin/autoheader2.13
-./buildconf --force
 
 
 ## ======== patch for libxml > 2.9.0 ========
@@ -48,6 +44,9 @@ rm bison-2.4.1.tar.gz
 make distclean
 
 export ARCH=$ARCH
+export PATH="$1/bin:$PATH"
+./buildconf --force
+
 if [ "$ARCH" == "" ]; then
 	export AR=ar
 	export AS=as
@@ -64,6 +63,10 @@ else
 	export CC=${ARCH}-gcc
 	export NM=${ARCH}-nm
 	./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+
+	# Need to manually patch out some define
+	sed -i 's/DEFS = /DEFS = -D__USE_BSD /g' Makefile
+	sed -i 's/HAVE_FTOK 1/HAVE_FTOK 0/g' main/php_config.h
 fi
 
 make

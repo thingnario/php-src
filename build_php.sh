@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then
-    echo $0: usage: cross_compile_library.sh ARCH 
-    echo "example: usage: cross_compile_library.sh [ arm-linux | arm-linux-gnueabihf | arm-linux-gnueabi ]"
-    exit 1
+if [ "$#" -ne 2 ]; then
+    echo "Usage: ./build_php.sh tool_chain_path install_path!"
+    echo "Example: ./build_php.sh /usr/local/arm-linux /Desktop/eric/logger/build/moxa-ia240/php"
+    exit
 fi
 
 # ======== find architecture ========
@@ -12,6 +12,8 @@ item=`ls $tool_chain_path/bin | grep gcc`
 IFS=' ' read -ra ADDR <<< "$item"
 item="${ADDR[0]}"
 ARCH=`echo $item | sed -e 's/-gcc.*//g'`
+
+install_path=$2/../
 
 
 # ======== setup autoconf 2.13 ========
@@ -54,7 +56,7 @@ if [ "$ARCH" == "" ]; then
 	export RANLIB=ranlib
 	export CC=gcc
 	export NM=nm
-	./configure --prefix=$tool_chain_path --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+	./configure --prefix=$2 --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$install_path/libxml
 else
 	export AR=${ARCH}-ar
 	export AS=${ARCH}-as
@@ -62,7 +64,7 @@ else
 	export RANLIB=${ARCH}-ranlib
 	export CC=${ARCH}-gcc
 	export NM=${ARCH}-nm
-	./configure --prefix=$tool_chain_path --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$tool_chain_path
+	./configure --prefix=$2 --target=${ARCH} --host=${ARCH} --enable-static --without-sqlite3 --without-pdo-sqlite --without-pear --enable-simplexml --disable-mbregex --enable-sockets --disable-opcache --enable-libxml --without-zlib --enable-session --enable-json --disable-all --enable-static=yes --enable-shared=no --with-libxml-dir=$install_path/libxml
 
 	# Need to manually patch out some define
 	sed -i 's/DEFS = /DEFS = -D__USE_BSD /g' Makefile
@@ -70,4 +72,4 @@ else
 fi
 
 make
-sudo "PATH=$PATH" make install
+make install

@@ -17,9 +17,9 @@ install_path=$2/../
 
 
 # ======== setup autoconf 2.13 ========
-sudo apt-get install autoconf2.13
+apt-get install autoconf2.13
 if [ ! -f /usr/share/autoconf2.13/acconfig.h ]; then
-	sudo ln -s /etc/autoconf2.13/acconfig.h /usr/share/autoconf2.13/acconfig.h
+	ln -s /etc/autoconf2.13/acconfig.h /usr/share/autoconf2.13/acconfig.h
 fi
 export PHP_AUTOCONF=/usr/bin/autoconf2.13
 export PHP_AUTOHEADER=/usr/bin/autoheader2.13
@@ -37,7 +37,7 @@ chmod +x configure
 mkdir build
 ./configure
 make -j 4
-sudo make install
+make install
 cd ..
 rm bison-2.4.1.tar.gz
 
